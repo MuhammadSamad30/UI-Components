@@ -5,6 +5,7 @@ import { client } from "@/sanity/lib/client";
 import { useCart } from "@/app/context/cartContext";
 import { useWishlist } from "@/app/context/WishlistContext";
 import SearchBar from "./SearchBar";
+import Link from "next/link";
 
 interface Product {
   _id: string;
@@ -92,6 +93,7 @@ const Products: React.FC = () => {
             >
               <div className="p-4">
                 {product.imageUrl ? (
+                  <Link href={`/product/${product._id}`}>
                   <Image
                     src={product.imageUrl}
                     alt={product.name}
@@ -99,6 +101,7 @@ const Products: React.FC = () => {
                     height={200}
                     className="w-full h-80 object-cover"
                   />
+                  </Link>
                 ) : (
                   <div className="w-full h-40 bg-gray-200 flex items-center justify-center">
                     <span className="text-gray-500 text-sm">
