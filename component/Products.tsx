@@ -13,23 +13,25 @@ interface Product {
   imageUrl?: string;
   price: number;
   description: string;
-  discountPercentage: number;
-  isFeaturedProduct: boolean;
-  stockLevel: number;
+  discountPercent: number;
+  new: boolean;
   category: string;
+  colors: string[];
+  sizes: string[];
 }
 
 const fetchProducts = async (): Promise<Product[]> => {
-  const query = `*[_type == "product"]{
+  const query = `*[_type == "products"] {
     _id,
     name,
     "imageUrl": image.asset->url,
     price,
     description,
-    discountPercentage,
-    isFeaturedProduct,
-    stockLevel,
-    category
+    discountPercent,
+    new,
+    category,
+    colors,
+    sizes
   }`;
 
   return await client.fetch(query);
@@ -68,65 +70,92 @@ const Products: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center bg-[#d8c8abdd] w-full h-full py-[10%]">
-        <div className="animate-text p-2 bg-gradient-to-r from-[#30635c] via-[#926868] to-[#8b6eda] text-transparent text-5xl font-black bg-clip-text">
+      <div className="flex items-center justify-center bg-gray-50 w-full h-screen py-[10%]">
+        <div className="animate-text p-2 bg-gradient-to-r from-green-500 via-purple-500 to-pink-500 text-transparent text-5xl font-black bg-clip-text">
           Loading...
         </div>
-        <div className="ml-4 h-10 w-10 border-8 border-t-transparent border-[#b88888] rounded-full animate-spin"></div>
+        <div className="ml-4 h-10 w-10 border-8 border-t-transparent border-gray-400 rounded-full animate-spin"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#d8c8abdd] py-10">
+    <div className="min-h-screen bg-gray-50 py-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-2xl font-bold text-gray-800 mb-8 text-center">
-          Our Products
+        <h1 className="text-3xl font-bold text-gray-800 mb-8 text-center">
+          Explore Our Products
         </h1>
         <SearchBar onSearch={handleSearch} />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredProducts.map((product) => (
-
             <div
               key={product._id}
-              className="bg-[#83ece7] shadow-md rounded-lg overflow-hidden cursor-pointer hover:shadow-lg transform hover:scale-105 transition-transform duration-200"
+              className="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-lg transform hover:scale-105 transition-transform duration-200"
             >
               <div className="p-4">
                 {product.imageUrl ? (
                   <Link href={`/product/${product._id}`}>
-                  <Image
-                    src={product.imageUrl}
-                    alt={product.name}
-                    width={300}
-                    height={200}
-                    className="w-full h-80 object-cover"
-                  />
+                    <Image
+                      src={product.imageUrl}
+                      alt={product.name}
+                      width={300}
+                      height={200}
+                      className="w-full h-64 object-cover rounded-t-md"
+                    />
                   </Link>
                 ) : (
-                  <div className="w-full h-40 bg-gray-200 flex items-center justify-center">
-                    <span className="text-gray-500 text-sm">
-                      No Image Available
-                    </span>
+                  <div className="w-full h-64 bg-gray-200 flex items-center justify-center">
+                    <span className="text-gray-500 text-sm">No Image Available</span>
                   </div>
                 )}
-                <h2 className="mt-4 text-base font-semibold text-gray-800 text-center">
-                  {product.name}
-                </h2>
-                <p className="mt-2 text-gray-700 font-medium text-center">
-                  Rs. {product.price.toFixed(2)}
-                </p>
-                <button
-                  onClick={() => addToCart(product)}
-                  className="w-full mt-4 px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-md hover:bg-blue-600 transition"
-                >
-                  Add to Cart
-                </button>
-                <button
-                  onClick={() => addToWishlist(product)}
-                  className="w-full mt-4 px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-md hover:bg-green-600 transition"
-                >
-                  Add to Wishlist
-                </button>
+                <div className="mt-4">
+                  <h2 className="text-lg font-bold text-gray-800 truncate">
+                    {product.name}
+                  </h2>
+                  <p className="text-sm text-gray-600 mt-1">{product.category}</p>
+                  <div className="mt-2 flex items-center justify-between">
+                    <span className="text-xl font-semibold text-green-600">
+                      Rs. {product.price.toFixed(2)}
+                    </span>
+                    {product.discountPercent > 0 && (
+                      <span className="text-sm text-red-500">
+                        -{product.discountPercent}%
+                      </span>
+                    )}
+                  </div>
+                  {product.new && (
+                    <span className="text-xs font-medium text-white bg-blue-500 px-2 py-1 rounded-full inline-block mt-2">
+                      New Arrival
+                    </span>
+                  )}
+                  <div className="flex mt-4 gap-2">
+                    {product.colors.map((color, index) => (
+                      <span
+                        key={index}
+                        className="w-5 h-5 rounded-full"
+                        style={{ backgroundColor: color }}
+                        title={color}
+                      ></span>
+                    ))}
+                  </div>
+                  <div className="mt-4 text-sm text-gray-700">
+                    Available Sizes: {product.sizes.join(", ")}
+                  </div>
+                  <div className="flex gap-2 mt-4">
+                    <button
+                      onClick={() => addToCart(product)}
+                      className="flex-1 px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-md hover:bg-blue-600 transition"
+                    >
+                      Add to Cart
+                    </button>
+                    <button
+                      onClick={() => addToWishlist(product)}
+                      className="flex-1 px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-md hover:bg-green-600 transition"
+                    >
+                      Wishlist
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           ))}
@@ -137,4 +166,3 @@ const Products: React.FC = () => {
 };
 
 export default Products;
-
