@@ -3,16 +3,16 @@
 import React from "react";
 import Link from "next/link";
 
-const EcoShop: React.FC = () => {
+const ShopCo: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-100 via-green-50 to-green-200 flex items-center py-2 justify-center">
       <div className="max-w-4xl mx-auto text-center p-6">
         <h1 className="text-4xl sm:text-5xl font-extrabold text-green-800 mb-6">
-          Welcome to <span className="text-emerald-600">EcoShop</span>
+          Welcome to <span className="text-emerald-600">Shop.Co</span>
         </h1>
 
         <p className="text-lg sm:text-xl text-gray-700 mb-8 leading-relaxed">
-          Discover a world of sustainable living. At <span className="font-semibold text-green-700">EcoShop</span>, 
+          Discover a world of sustainable living. At <span className="font-semibold text-green-700">Shop.Co</span>, 
           we provide eco-friendly products that care for the planet and your well-being. Together, we can build a greener future.
         </p>
 
@@ -28,4 +28,4 @@ const EcoShop: React.FC = () => {
   );
 };
 
-export default EcoShop;
+export default ShopCo;
