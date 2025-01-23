@@ -35,6 +35,7 @@ const Auth = () => {
           <input
             placeholder="Enter email"
             ref={email}
+            type="email"
             className="w-full bg-gray-100 text-gray-800 py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />

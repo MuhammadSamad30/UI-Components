@@ -1,12 +1,19 @@
 "use client";
 import { useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { useUserContext } from "@/app/context/UserContext";
 
-const Checkout = () => {
+interface SelectedItem {
+  name: string;
+  price: number;
+  quantity: number;
+}
+
+const CheckoutContent = () => {
   const searchParams = useSearchParams();
   const { addOrder, setUserDetails } = useUserContext();
-  const [selectedItem, setSelectedItem] = useState<any | null>(null);
+
+  const [selectedItem, setSelectedItem] = useState<SelectedItem | null>(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
@@ -29,6 +36,7 @@ const Checkout = () => {
       alert("No product selected for checkout.");
       return;
     }
+
     setUserDetails(name, email);
 
     addOrder({
@@ -37,7 +45,8 @@ const Checkout = () => {
       total: selectedItem.price * selectedItem.quantity,
       status: "Processing",
     });
-    alert("Order placed successfully!");
+
+    alert("Order placed successfully! Check your Profile");
   };
 
   return (
@@ -116,6 +125,14 @@ const Checkout = () => {
         )}
       </div>
     </div>
+  );
+};
+
+const Checkout = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CheckoutContent />
+    </Suspense>
   );
 };
 
